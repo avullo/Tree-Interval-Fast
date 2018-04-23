@@ -32,7 +32,7 @@
   http://www.eternallyconfuzzled.com/Libraries.aspx
 
 */
-#include "itree.h"
+#include "interval_tree.h"
 
 #ifdef __cplusplus
 #include <cstdlib>
