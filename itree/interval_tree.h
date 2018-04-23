@@ -51,10 +51,6 @@ extern "C" {
 typedef struct itree itree_t;
 typedef struct itreetrav itreetrav_t;
 
-/* User-defined interval data item handling */
-typedef void *(*dup_f) ( void* p );
-typedef void  (*rel_f) ( void* p );
-
 /* Interval tree functions */
 itree_t    *itree_new ( dup_f dup, rel_f rel );
 void       itree_delete ( itree_t *tree );
