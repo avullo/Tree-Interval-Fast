@@ -168,6 +168,26 @@ new( class )
     RETVAL
 
 int
+insert( tree, interval )
+    Tree::Interval::Fast tree
+    Tree::Interval::Fast::Interval interval
+  PROTOTYPE: $$
+  CODE:
+    RETVAL = itree_insert( tree, interval );
+  OUTPUT:
+    RETVAL
+
+int
+remove( tree, interval )
+    Tree::Interval::Fast tree
+    Tree::Interval::Fast::Interval interval
+  PROTOTYPE: $$
+  CODE:
+    RETVAL = itree_remove( tree, interval );
+  OUTPUT:
+    RETVAL
+	 
+int
 size( tree )
     Tree::Interval::Fast tree
   PROTOTYPE: $
@@ -177,7 +197,7 @@ size( tree )
     RETVAL
 
 void
-DESTROY(tree)
+DESTROY( tree )
     Tree::Interval::Fast tree
   PROTOTYPE: $
   CODE:
