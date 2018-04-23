@@ -44,12 +44,14 @@ extern "C" {
 #include "ppport.h"
   
 #include "interval.h"
-  
+#include "interval_tree.h"
+
 #ifdef __cplusplus
 }
 #endif
 
 typedef interval_t* Tree__Interval__Fast__Interval;
+typedef itree_t* Tree__Interval__Fast;
 
 /* C-level callbacks required by the interval tree library */
 
@@ -146,3 +148,38 @@ interval_DESTROY(interval)
   CODE:
     interval_delete(interval);
   
+MODULE = Tree::Interval::Fast 	PACKAGE = Tree::Interval::Fast
+
+Tree::Interval::Fast
+new( class )
+    char* class
+  PROTOTYPE: $
+  CODE:
+
+    TRACEME("Allocating interval tree");
+    RETVAL = itree_new(svclone, svdestroy);
+
+    if(RETVAL == NULL) {
+      warn("Unable to allocate interval tree");
+      XSRETURN_UNDEF;
+    }
+
+  OUTPUT:
+    RETVAL
+
+int
+size( tree )
+    Tree::Interval::Fast tree
+  PROTOTYPE: $
+  CODE:
+    RETVAL = itree_size( tree );
+  OUTPUT:
+    RETVAL
+
+void
+DESTROY(tree)
+    Tree::Interval::Fast tree
+  PROTOTYPE: $
+  CODE:
+      TRACEME("Deleting interval tree");
+      itree_delete(tree);
