@@ -1,0 +1,2 @@
+TYPEMAP
+Tree::Interval::Fast::Interval        T_PTROBJ
