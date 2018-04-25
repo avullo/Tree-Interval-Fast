@@ -58,8 +58,7 @@ typedef itree_t* Tree__Interval__Fast;
 static SV* svclone(SV* p) {
   dTHX;       /* fetch context */
 
-  return newSVsv(p);
-  // return SvREFCNT_inc(p);
+  return SvREFCNT_inc(p);
 }
 
 void svdestroy(SV* p) {
