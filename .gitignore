@@ -1,4 +1,5 @@
 *~
+*.bs
 /blib/
 blib/
 lib/*~

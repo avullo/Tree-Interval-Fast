@@ -57,13 +57,14 @@ typedef itree_t* Tree__Interval__Fast;
 
 static SV* svclone(SV* p) {
   dTHX;       /* fetch context */
-  
+
   return newSVsv(p);
+  // return SvREFCNT_inc(p);
 }
 
 void svdestroy(SV* p) {
   dTHX;       /* fetch context */
-  
+
   SvREFCNT_dec(p);
 }
 
@@ -71,10 +72,10 @@ void svdestroy(SV* p) {
  * XS SECTION                                                     
  *====================================================================*/
 
-MODULE = Tree::Interval::Fast 	PACKAGE = Tree::Interval::Fast::Interval PREFIX=interval_
+MODULE = Tree::Interval::Fast 	PACKAGE = Tree::Interval::Fast::Interval
 
 Tree::Interval::Fast::Interval
-interval_new(packname, low, high, data)
+new(packname, low, high, data)
     char* packname
     float low
     float high
@@ -86,7 +87,7 @@ interval_new(packname, low, high, data)
     RETVAL
 
 Tree::Interval::Fast::Interval
-interval_copy(interval)
+copy(interval)
     Tree::Interval::Fast::Interval interval
   PROTOTYPE: $
   CODE:
@@ -95,7 +96,7 @@ interval_copy(interval)
     RETVAL
 
 int
-interval_overlap(i1, i2)
+overlap(i1, i2)
     Tree::Interval::Fast::Interval i1
     Tree::Interval::Fast::Interval i2
   PROTOTYPE: $$ 
@@ -105,7 +106,7 @@ interval_overlap(i1, i2)
     RETVAL
 
 int
-interval_equal(i1, i2)
+equal(i1, i2)
     Tree::Interval::Fast::Interval i1
     Tree::Interval::Fast::Interval i2
   PROTOTYPE: $$ 
@@ -115,7 +116,7 @@ interval_equal(i1, i2)
     RETVAL
 
 float
-interval_low(interval)
+low(interval)
     Tree::Interval::Fast::Interval interval
   PROTOTYPE: $
   CODE:
@@ -124,7 +125,7 @@ interval_low(interval)
     RETVAL
 
 float
-interval_high(interval)
+high(interval)
     Tree::Interval::Fast::Interval interval
   PROTOTYPE: $
   CODE:
@@ -133,7 +134,7 @@ interval_high(interval)
     RETVAL
 
 SV*
-interval_data(interval)
+data(interval)
     Tree::Interval::Fast::Interval interval
   PROTOTYPE: $
   CODE:
@@ -142,7 +143,7 @@ interval_data(interval)
     RETVAL
 
 void
-interval_DESTROY(interval)
+DESTROY(interval)
     Tree::Interval::Fast::Interval interval
   PROTOTYPE: $
   CODE:
@@ -166,6 +167,39 @@ new( class )
 
   OUTPUT:
     RETVAL
+
+Tree::Interval::Fast::Interval
+find( tree, low, high )
+    Tree::Interval::Fast tree
+    int low
+    int high
+  PROTOTYPE: $$$
+  PREINIT:
+    interval_t *i, *result;
+    SV* dummy;
+  CODE:
+    dummy = &PL_sv_undef;
+    i = interval_new( low, high, dummy, svclone, svdestroy);
+
+    result = itree_find( tree, i );
+    interval_delete(i);
+
+    if(result == NULL)
+      XSRETURN_UNDEF;
+
+    /*
+     * Return a copy of the result as this belongs to the tree
+     *
+     * WARNING
+     *
+     * Invoking interval_copy on the result generates segfault.
+     * Couldn't figure out why so far.
+     *
+     */
+    RETVAL = interval_new( result->low, result->high, result->data, svclone, svdestroy);
+  OUTPUT:
+    RETVAL
+
 
 int
 insert( tree, interval )
@@ -202,4 +236,4 @@ DESTROY( tree )
   PROTOTYPE: $
   CODE:
       TRACEME("Deleting interval tree");
-      itree_delete(tree);
+      itree_delete( tree );
