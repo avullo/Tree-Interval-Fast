@@ -44,6 +44,7 @@ extern "C" {
 #include "ppport.h"
   
 #include "interval.h"
+#include "interval_list.h"
 #include "interval_tree.h"
 
 #ifdef __cplusplus
@@ -196,6 +197,54 @@ find( tree, low, high )
      *
      */
     RETVAL = interval_new( result->low, result->high, result->data, svclone, svdestroy);
+
+  OUTPUT:
+    RETVAL
+
+SV*
+findall( tree, low, high )
+    Tree::Interval::Fast tree
+    int low
+    int high
+  PROTOTYPE: $$$
+  PREINIT:
+    AV* av_ref;
+    interval_t *i;
+    const interval_t *item;
+    ilist_t* results;
+    ilisttrav_t* trav;
+    SV* dummy;
+  CODE:
+    dummy = &PL_sv_undef;
+    i = interval_new ( low, high, &PL_sv_undef, svclone, svdestroy );
+
+    results = itree_findall ( tree, i );
+    interval_delete ( i );
+
+    /* empty results set, return undef */
+    if ( results == NULL || !ilist_size ( results ) ) {
+      ilist_delete ( results );
+      XSRETURN_UNDEF;
+    }
+
+    /* return a reference to an array of intervals */
+    av_ref = (AV*) sv_2mortal( (SV*) newAV() );
+
+    trav = ilisttrav_new( results );
+    if ( trav == NULL ) {
+      ilist_delete ( results );
+      croak("Cannot traverse results set");
+    }
+
+    for(item = ilisttrav_first(trav); item!=NULL; item=ilisttrav_next(trav)) {
+      SV* ref = newSV(0);
+      sv_setref_pv( ref, "Tree::Interval::Fast::Interval", (void*)interval_new(item->low, item->high, item->data, svclone, svdestroy) );
+      av_push(av_ref, ref);
+    }
+
+    RETVAL = newRV( (SV*) av_ref );
+    ilist_delete ( results );
+
   OUTPUT:
     RETVAL
 
@@ -207,6 +256,7 @@ insert( tree, interval )
   PROTOTYPE: $$
   CODE:
     RETVAL = itree_insert( tree, interval );
+
   OUTPUT:
     RETVAL
 
@@ -217,6 +267,7 @@ remove( tree, interval )
   PROTOTYPE: $$
   CODE:
     RETVAL = itree_remove( tree, interval );
+
   OUTPUT:
     RETVAL
 	 
@@ -226,6 +277,7 @@ size( tree )
   PROTOTYPE: $
   CODE:
     RETVAL = itree_size( tree );
+
   OUTPUT:
     RETVAL
 
