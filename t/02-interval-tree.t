@@ -1,7 +1,7 @@
 use 5.008;
 use strict;
 use warnings;
-use Test::More tests => 37, 'die';
+use Test::More tests => 40, 'die';
 
 use FindBin qw( $Bin );
 use Data::Dumper;
@@ -23,35 +23,34 @@ foreach my $interval (@{$intervals}) {
 }
 is($tree->size(), 6, 'size after insert');
 
-for my $i (0 .. 5) {
-  ok($tree->remove($intervals->[$i]), 'remove interval');
-  is($tree->size(), 5-$i, 'size after removal');
-}
-
-my $query = Tree::Interval::Fast::Interval->new(6., 7., 10);
-my $result = $tree->find($query);
+my $result = $tree->find(6, 7);
 isa_ok($result, 'Tree::Interval::Fast::Interval');
 is($result->low, 5, 'result left bound');
 is($result->high, 20, 'result right bound');
 is($result->data, 40, 'result data');
 
-$query = Tree::Interval::Fast::Interval->new(1, 4, 1);
-$result = $tree->find($query);
+$result = $tree->find(1, 4);
 ok(!$result, 'no results');
 
-$query = Tree::Interval::Fast::Interval->new(18, 25, 50);
-$result = $tree->find($query);
+my $result = $tree->find(18, 25);
 isa_ok($result, 'Tree::Interval::Fast::Interval');
 is($result->low, 15, 'result left bound');
 is($result->high, 20, 'result right bound');
 is($result->data, 10, 'result data');
 
-$query = Tree::Interval::Fast::Interval->new(8, 11, 100);
-my $results = $tree->findall($query);
+my $results = $tree->find(1, 2);
+ok(!$results, 'no results');
+$results = $tree->findall(8, 11);
 is(scalar @$results, 2, 'result set size');
 foreach my $item (@{$results}) {
+  isa_ok($item, 'Tree::Interval::Fast::Interval');
   ok($item->low == 5 || $item->low == 10, 'search item left bound');
   ok($item->high == 20 || $item->high == 30, 'search item left bound');
+}
+
+for my $i (0 .. 5) {
+  ok($tree->remove($intervals->[$i]), 'remove interval');
+  is($tree->size(), 5-$i, 'size after removal');
 }
 
 sub make_intervals {
