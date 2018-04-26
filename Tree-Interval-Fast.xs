@@ -176,10 +176,9 @@ find( tree, low, high )
   PROTOTYPE: $$$
   PREINIT:
     interval_t *i, *result;
-    SV* dummy;
+    
   CODE:
-    dummy = &PL_sv_undef;
-    i = interval_new( low, high, dummy, svclone, svdestroy);
+    i = interval_new( low, high, &PL_sv_undef, svclone, svdestroy);
 
     result = itree_find( tree, i );
     interval_delete(i);
@@ -213,9 +212,8 @@ findall( tree, low, high )
     const interval_t *item;
     ilist_t* results;
     ilisttrav_t* trav;
-    SV* dummy;
+    
   CODE:
-    dummy = &PL_sv_undef;
     i = interval_new ( low, high, &PL_sv_undef, svclone, svdestroy );
 
     results = itree_findall ( tree, i );
