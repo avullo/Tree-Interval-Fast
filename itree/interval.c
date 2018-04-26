@@ -36,7 +36,6 @@ using std::size_t;
 #endif
 
 interval_t *interval_new ( float low, float high, SV *data, dup_f dup, rel_f rel ) {
-
   interval_t *ri = (interval_t*) malloc ( sizeof *ri );
 
   if ( ri == NULL )
@@ -47,7 +46,7 @@ interval_t *interval_new ( float low, float high, SV *data, dup_f dup, rel_f rel
   ri->dup = dup;
   ri->rel = rel;
   ri->data = ri->dup( data );
-  
+
   return ri;
 }
 
@@ -57,8 +56,7 @@ interval_t *interval_copy ( const interval_t *i ) {
 
 void interval_delete ( interval_t *i ) {
   if ( i != NULL ) {
-    
-    i->rel ( i->data );
+    if ( i->data ) i->rel ( i->data );
     free ( i );
   }
 
