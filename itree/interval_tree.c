@@ -260,12 +260,14 @@ ilist_t *itree_findall( itree_t *tree, interval_t *interval )
 {
 
   ilist_t* results = ilist_new();
+  
+  if ( results != NULL ) {
+    /* empty tree case */
+    if ( tree->root == NULL )
+      return results;
 
-  /* empty tree case */
-  if ( tree->root == NULL )
-    return results;
-
-  search ( tree->root, interval, results );
+    search ( tree->root, interval, results );
+  }
 
   return results;
 }
