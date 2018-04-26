@@ -11,17 +11,17 @@ BEGIN {
   use_ok 'Tree::Interval::Fast::Interval';
 }
 
-my $interval = Tree::Interval::Fast::Interval->new(10, 20, 10);
+my $interval = Tree::Interval::Fast::Interval->new(10, 20, [1,2,3]);
 isa_ok($interval, "Tree::Interval::Fast::Interval");
 is($interval->low, 10, 'left bound');
 is($interval->high, 20, 'right bound');
-is($interval->data, 10, 'interval data');
+is_deeply($interval->data, [1,2,3], 'interval data');
 
 my $copy = $interval->copy;
 isa_ok($copy, "Tree::Interval::Fast::Interval");
 is($copy->low, 10, 'left bound');
 is($copy->high, 20, 'right bound');
-is($copy->data, 10, 'interval data');
+is_deeply($copy->data, [1,2,3], 'interval data');
 
 my $non_overlapping = Tree::Interval::Fast::Interval->new(21, 30, 21);
 ok(!$interval->overlap($non_overlapping), 'does not overlap');
