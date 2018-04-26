@@ -32,7 +32,7 @@ is($result->data, 40, 'result data');
 $result = $tree->find(1, 4);
 ok(!$result, 'no results');
 
-my $result = $tree->find(18, 25);
+$result = $tree->find(18, 25);
 isa_ok($result, 'Tree::Interval::Fast::Interval');
 is($result->low, 15, 'result left bound');
 is($result->high, 20, 'result right bound');
