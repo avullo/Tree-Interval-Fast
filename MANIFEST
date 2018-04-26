@@ -22,7 +22,8 @@ README
 TODO
 t/00-load.t
 t/01-interval.t
-t/04-leak.t
+t/02-interval-tree.t
+t/03-leak.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
