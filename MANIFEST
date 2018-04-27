@@ -27,6 +27,5 @@ t/03-leak.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
-TODO
 typemap
 xt/boilerplate.t
