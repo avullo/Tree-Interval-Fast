@@ -38,7 +38,7 @@ is($result->low, 15, 'result left bound');
 is($result->high, 20, 'result right bound');
 is($result->data, 10, 'result data');
 
-my $results = $tree->find(1, 2);
+my $results = $tree->findall(1, 2);
 ok(!$results, 'no results');
 $results = $tree->findall(8, 11);
 is(scalar @$results, 2, 'result set size');
